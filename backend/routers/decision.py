@@ -1,3 +1,5 @@
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from schemas.models import (
@@ -8,6 +10,13 @@ from schemas.models import (
 from services import ai_service
 
 router = APIRouter(prefix="/api", tags=["decision"])
+
+_executor = ThreadPoolExecutor(max_workers=8)
+
+
+def _run(fn, *args):
+  loop = asyncio.get_event_loop()
+  return loop.run_in_executor(_executor, fn, *args)
 
 
 class ContractRequest(BaseModel):
@@ -23,13 +32,22 @@ class ActionPlanRequest(BaseModel):
 @router.post("/analyze", response_model=FullAnalysis)
 async def analyze_decision(body: UserInput):
   try:
-    extraction = ai_service.extract_decision(body.message)
-    belief_graph = ai_service.generate_belief_graph(extraction)
-    assumptions = ai_service.stress_test_assumptions(extraction)
-    contradictions = ai_service.detect_contradictions(extraction)
-    scenarios = ai_service.generate_scenarios(extraction)
-    tradeoffs = ai_service.analyze_tradeoffs(scenarios)
-    questions = ai_service.generate_reflection_questions(extraction, assumptions, contradictions)
+    # Step 1: extraction (everything else depends on this)
+    extraction = await _run(ai_service.extract_decision, body.message)
+
+    # Step 2: run 4 calls in parallel
+    belief_graph, assumptions, contradictions, scenarios = await asyncio.gather(
+      _run(ai_service.generate_belief_graph, extraction),
+      _run(ai_service.stress_test_assumptions, extraction),
+      _run(ai_service.detect_contradictions, extraction),
+      _run(ai_service.generate_scenarios, extraction),
+    )
+
+    # Step 3: final two in parallel
+    tradeoffs, questions = await asyncio.gather(
+      _run(ai_service.analyze_tradeoffs, scenarios),
+      _run(ai_service.generate_reflection_questions, extraction, assumptions, contradictions),
+    )
 
     return FullAnalysis(
       extraction=extraction,
@@ -47,7 +65,12 @@ async def analyze_decision(body: UserInput):
 @router.post("/contract", response_model=DecisionContract)
 async def generate_contract(body: ContractRequest):
   try:
-    contract = ai_service.generate_decision_contract(body.decision, body.analysis.assumptions, body.analysis.scenarios)
+    contract = await _run(
+      ai_service.generate_decision_contract,
+      body.decision,
+      body.analysis.assumptions,
+      body.analysis.scenarios,
+    )
     return contract
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
@@ -56,7 +79,7 @@ async def generate_contract(body: ContractRequest):
 @router.post("/action-plan", response_model=ActionPlan)
 async def generate_action_plan(body: ActionPlanRequest):
   try:
-    plan = ai_service.generate_action_plan(body.decision, body.extraction)
+    plan = await _run(ai_service.generate_action_plan, body.decision, body.extraction)
     return plan
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
