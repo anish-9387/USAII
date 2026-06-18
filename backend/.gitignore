@@ -29,3 +29,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# GCP service account key
+key.json
