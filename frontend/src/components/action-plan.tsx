@@ -1,22 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import type { ActionPlan, FullAnalysis } from "@/lib/types";
 import { apiPost } from "@/lib/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Target, Loader2 } from "lucide-react";
 
-interface ActionPlanSectionProps {
-  analysis: FullAnalysis;
-}
+const TIMELINE_COLORS = ["var(--indigo)", "#64748B", "#94A3B8"];
 
-export function ActionPlanSection({ analysis }: ActionPlanSectionProps) {
+export function ActionPlanSection({ analysis }: { analysis: FullAnalysis }) {
   const [plan, setPlan] = useState<ActionPlan | null>(null);
   const [loading, setLoading] = useState(false);
   const [decision, setDecision] = useState("");
 
-  const generatePlan = async () => {
+  const generate = async () => {
     if (!decision.trim()) return;
     setLoading(true);
     try {
@@ -29,57 +25,124 @@ export function ActionPlanSection({ analysis }: ActionPlanSectionProps) {
     }
   };
 
-  const planSteps = plan
-    ? [
-        { label: "30-Day Plan", steps: plan.plan_30_day },
-        { label: "60-Day Plan", steps: plan.plan_60_day },
-        { label: "90-Day Plan", steps: plan.plan_90_day },
-      ]
-    : [];
+  const phases = plan ? [
+    { label: "Days 1–30",  steps: plan.plan_30_day, color: TIMELINE_COLORS[0] },
+    { label: "Days 31–60", steps: plan.plan_60_day, color: TIMELINE_COLORS[1] },
+    { label: "Days 61–90", steps: plan.plan_90_day, color: TIMELINE_COLORS[2] },
+  ] : [];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Action Plan</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1 block">What did you decide?</label>
-          <div className="flex gap-2">
-            <input
-              value={decision}
-              onChange={(e) => setDecision(e.target.value)}
-              placeholder="e.g., Accept the 6 LPA offer"
-              className="flex-1 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-800 dark:bg-zinc-950"
-            />
-            <Button onClick={generatePlan} disabled={!decision.trim() || loading} size="sm">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Target className="h-4 w-4" />}
-              Generate
-            </Button>
-          </div>
+    <div>
+      <div className="section-label">Layer 9 // Action Plan</div>
+      <div style={{ marginBottom: 20 }}>
+        <h2 style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.01em", margin: "4px 0 8px" }}>
+          Immediate Execution Timeline
+        </h2>
+        <div className="status-line">
+          <span className="status-dot" />
+          <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12 }}>
+            90-day action plan · generated after decision
+          </span>
         </div>
-        {plan && (
-          <div className="space-y-4">
-            {planSteps.map((section) => (
-              <div key={section.label}>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">{section.label}</h4>
-                <div className="space-y-2">
-                  {section.steps.map((step, i) => (
-                    <div key={i} className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{step.title}</p>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{step.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950">
-              <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-1">First Action</p>
-              <p className="text-sm text-amber-800 dark:text-amber-300">{plan.first_action}</p>
+      </div>
+
+      {!plan && (
+        <div className="card">
+          <div className="card-header">
+            <div className="card-label">Generate Action Plan</div>
+          </div>
+          <div className="card-body">
+            <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "var(--text-muted)", marginBottom: 10 }}>
+              Enter the decision you made. The system will generate a concrete 90-day execution plan.
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <input
+                value={decision}
+                onChange={(e) => setDecision(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && generate()}
+                placeholder="e.g., Accept the 6 LPA offer"
+                className="input-mono"
+              />
+              <button className="btn-indigo" onClick={generate} disabled={!decision.trim() || loading} style={{ flexShrink: 0 }}>
+                {loading ? <Loader2 style={{ width: 14, height: 14 }} className="spin" /> : "▶"}
+                {loading ? "Generating..." : "Generate Plan"}
+              </button>
             </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      )}
+
+      {plan && (
+        <>
+          {/* First action CTA */}
+          <div className="card" style={{ borderLeft: "3px solid var(--indigo)", marginBottom: 20, background: "#EEF2FF" }}>
+            <div className="card-body">
+              <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, fontWeight: 600, color: "var(--indigo)", letterSpacing: "0.06em", marginBottom: 6 }}>
+                ▶ FIRST ACTION — DO THIS TODAY
+              </div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: "var(--text-primary)" }}>{plan.first_action}</div>
+            </div>
+          </div>
+
+          {/* Timeline */}
+          <div className="card" style={{ marginBottom: 16 }}>
+            <div className="card-header">
+              <div className="card-label">Execution Timeline</div>
+              <div className="card-title">90-Day Roadmap</div>
+            </div>
+            <div className="card-body">
+              {phases.map((phase, pi) => (
+                <div key={phase.label} style={{ marginBottom: pi < phases.length - 1 ? 20 : 0 }}>
+                  <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, fontWeight: 600, color: phase.color, marginBottom: 10 }}>
+                    {phase.label}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingLeft: 16, borderLeft: `2px solid ${phase.color}` }}>
+                    {phase.steps.map((step, i) => (
+                      <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                        <span style={{ color: phase.color, flexShrink: 0, marginTop: 2 }}>◎</span>
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: 13 }}>{step.title}</div>
+                          <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5, marginTop: 2 }}>{step.description}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Risk mitigation */}
+          <div className="grid-2" style={{ gap: 16 }}>
+            <div className="card">
+              <div className="card-header">
+                <div className="card-label">Risk Mitigation</div>
+              </div>
+              <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {plan.risk_mitigation.map((r, i) => (
+                  <div key={i} style={{ display: "flex", gap: 8, fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "var(--text-secondary)" }}>
+                    <span style={{ color: "var(--amber)", flexShrink: 0 }}>⚠</span>
+                    {r}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="card">
+              <div className="card-header">
+                <div className="card-label">Assumptions to Validate</div>
+              </div>
+              <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {plan.assumptions_to_validate.map((a, i) => (
+                  <label key={i} style={{ display: "flex", gap: 8, cursor: "pointer", fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "var(--text-secondary)", alignItems: "flex-start" }}>
+                    <input type="checkbox" style={{ marginTop: 2, accentColor: "var(--indigo)" }} />
+                    {a}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
