@@ -31,7 +31,7 @@ export function TradeoffChart({ tradeoffs }: { tradeoffs: TradeoffAnalysis }) {
         <p className="text-xs text-zinc-400">No rankings — only comparison across dimensions.</p>
       </CardHeader>
       <CardContent>
-        <div className="h-[320px] w-full">
+        <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={chartData}>
               <PolarGrid stroke="#e4e4e7" />

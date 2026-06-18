@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import {
   ReactFlow,
   Background,
@@ -59,7 +58,7 @@ export function BeliefGraph({ graph }: { graph: BeliefGraphType }) {
         <CardTitle className="text-lg">Belief Graph</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] w-full rounded-lg border border-zinc-200 dark:border-zinc-800">
+        <div className="h-75 w-full rounded-lg border border-zinc-200 dark:border-zinc-800">
           <ReactFlow
             nodes={nodes}
             edges={edges}

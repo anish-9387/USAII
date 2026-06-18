@@ -25,7 +25,7 @@ export function ChatInput({ onAnalyze, loading }: ChatInputProps) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Describe your situation... e.g., I have a 6 LPA offer, my dream company comes later, family pressure is high..."
-          className="w-full min-h-[120px] resize-y rounded-xl border border-zinc-200 bg-white p-4 text-sm shadow-sm placeholder:text-zinc-400 focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-800 dark:bg-zinc-950 dark:placeholder:text-zinc-600 dark:focus:border-zinc-600 dark:focus:ring-zinc-800"
+          className="w-full min-h-30 resize-y rounded-xl border border-zinc-200 bg-white p-4 text-sm shadow-sm placeholder:text-zinc-400 focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:border-zinc-800 dark:bg-zinc-950 dark:placeholder:text-zinc-600 dark:focus:border-zinc-600 dark:focus:ring-zinc-800"
           rows={4}
         />
       </div>
