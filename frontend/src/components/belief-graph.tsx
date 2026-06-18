@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import {
   ReactFlow,
   Background,
@@ -16,14 +15,13 @@ import "reactflow/dist/style.css";
 import type { BeliefGraph as BeliefGraphType } from "@/lib/types";
 
 const TYPE_STYLES: Record<string, { bg: string; border: string; text: string; label: string }> = {
-  goal:       { bg: "#EEF2FF", border: "#6366F1", text: "#3730A3", label: "GOAL" },
+  goal: { bg: "#EEF2FF", border: "#6366F1", text: "#3730A3", label: "GOAL" },
   constraint: { bg: "#FFFBEB", border: "#F59E0B", text: "#92400E", label: "CONSTRAINT" },
-  priority:   { bg: "#ECFDF5", border: "#10B981", text: "#065F46", label: "PRIORITY" },
-  fear:       { bg: "#FEF2F2", border: "#EF4444", text: "#991B1B", label: "FEAR" },
-  action:     { bg: "#F0FDF4", border: "#06B6D4", text: "#0E7490", label: "ACTION" },
+  priority: { bg: "#ECFDF5", border: "#10B981", text: "#065F46", label: "PRIORITY" },
+  fear: { bg: "#FEF2F2", border: "#EF4444", text: "#991B1B", label: "FEAR" },
+  action: { bg: "#F0FDF4", border: "#06B6D4", text: "#0E7490", label: "ACTION" },
 };
 
-// Simple dagre-like layout: bucket by type then position
 function layoutNodes(nodes: Node[]): Node[] {
   const typeOrder = ["goal", "priority", "constraint", "fear", "action"];
   const cols: Record<string, Node[]> = {};
@@ -53,13 +51,11 @@ export function BeliefGraph({ graph }: { graph: BeliefGraphType }) {
       data: {
         nodeType: n.type,
         label: (
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 9, fontWeight: 600, letterSpacing: "0.06em", color: style.text, marginBottom: 2, textTransform: "uppercase" }}>
+          <div className="text-center">
+            <div className="font-mono text-[9px] font-semibold tracking-wider uppercase mb-0.5" style={{ color: style.text }}>
               {style.label}
             </div>
-            <div style={{ fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600, color: "#0F172A", lineHeight: 1.3 }}>
-              {n.label}
-            </div>
+            <div className="font-sans text-xs font-semibold text-zinc-900 leading-tight">{n.label}</div>
           </div>
         ),
       },
@@ -69,7 +65,6 @@ export function BeliefGraph({ graph }: { graph: BeliefGraphType }) {
         borderRadius: 4,
         padding: "10px 14px",
         minWidth: 130,
-        boxShadow: "none",
       },
     };
   });
@@ -94,29 +89,33 @@ export function BeliefGraph({ graph }: { graph: BeliefGraphType }) {
 
   return (
     <div>
-      <div className="section-label" style={{ marginBottom: 8 }}>Layer 2 // Belief Graph</div>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
+      <div className="font-mono text-[11px] font-medium text-zinc-400 tracking-wider uppercase flex items-center gap-2 mb-2 after:content-[''] after:flex-1 after:h-px after:bg-zinc-200">
+        Layer 2 // Belief Graph
+      </div>
+      <div className="flex items-start justify-between mb-5">
         <div>
-          <h2 style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.01em", margin: "4px 0 8px" }}>
-            Layer 2: Belief Mapping
-          </h2>
-          <div className="status-line">
-            <span className="status-dot" />
-            <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12 }}>
+          <h2 className="text-[28px] font-bold tracking-tight mt-1 mb-2">Layer 2: Belief Mapping</h2>
+          <div className="flex items-center gap-2 font-mono text-xs text-zinc-400">
+            <span className="w-1.75 h-1.75 rounded-full bg-indigo-500 shrink-0 animate-pulse" />
+            <span className="font-mono text-xs">
               {graph.nodes.length} nodes · {graph.edges.length} edges · interactive
             </span>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", maxWidth: 320, justifyContent: "flex-end" }}>
+        <div className="flex gap-1.5 flex-wrap max-w-[320px] justify-end">
           {legend.map(([type, s]) => (
-            <span key={type} className="chip" style={{ background: s.bg, color: s.text, border: `1px solid ${s.border}` }}>
+            <span
+              key={type}
+              className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded font-mono"
+              style={{ background: s.bg, color: s.text, border: `1px solid ${s.border}` }}
+            >
               {s.label}
             </span>
           ))}
         </div>
       </div>
 
-      <div className="card" style={{ height: 500 }}>
+      <div className="bg-white border border-zinc-200 rounded" style={{ height: 500 }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -131,7 +130,7 @@ export function BeliefGraph({ graph }: { graph: BeliefGraphType }) {
           <Controls style={{ boxShadow: "none", border: "1px solid #E2E8F0" }} />
         </ReactFlow>
       </div>
-      <p style={{ marginTop: 10, fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace" }}>
+      <p className="mt-2.5 text-[11px] text-zinc-400 font-mono">
         Drag nodes to rearrange · Scroll to zoom · Every node requires your explicit validation.
       </p>
     </div>

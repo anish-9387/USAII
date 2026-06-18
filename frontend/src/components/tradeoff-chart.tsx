@@ -26,29 +26,29 @@ export function TradeoffChart({ tradeoffs }: { tradeoffs: TradeoffAnalysis }) {
 
   return (
     <div>
-      <div className="section-label">Layer 6 // Tradeoff Analysis</div>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
+      <div className="font-mono text-[11px] font-medium text-zinc-400 tracking-wider uppercase flex items-center gap-2 mb-2 after:content-[''] after:flex-1 after:h-px after:bg-zinc-200">
+        Layer 6 // Tradeoff Analysis
+      </div>
+      <div className="flex flex-col sm:flex-row items-start justify-between mb-5 gap-3">
         <div>
-          <h2 style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.01em", margin: "4px 0 8px" }}>
-            Layer 6: Tradeoff Analysis
-          </h2>
-          <div className="status-line">
-            <span className="status-dot" />
-            <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12 }}>
+          <h2 className="text-xl sm:text-[28px] font-bold tracking-tight mt-1 mb-2">Layer 6: Tradeoff Analysis</h2>
+          <div className="flex items-center gap-2 font-mono text-xs text-zinc-400">
+            <span className="w-1.75 h-1.75 rounded-full bg-indigo-500 shrink-0 animate-pulse" />
+            <span className="font-mono text-xs">
               {tradeoffs.dimensions.length} dimensions · {tradeoffs.futures.length} scenarios compared
             </span>
           </div>
         </div>
-        <span className="chip chip-indigo">No ranking — only comparison</span>
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded font-mono bg-indigo-50 text-indigo-600">No ranking — only comparison</span>
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <div className="card-label">Radar Comparison</div>
-          <div className="card-title">Multi-Dimensional Tradeoff Map</div>
+      <div className="bg-white border border-zinc-200 rounded">
+        <div className="px-4 py-3 border-b border-zinc-200 bg-zinc-50">
+          <div className="text-[11px] font-semibold tracking-wider uppercase text-zinc-400">Radar Comparison</div>
+          <div className="text-sm font-bold text-zinc-900 mt-0.5">Multi-Dimensional Tradeoff Map</div>
         </div>
-        <div className="card-body">
-          <div style={{ height: 380 }}>
+        <div className="p-4">
+          <div className="h-95">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={chartData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
                 <PolarGrid stroke="#E2E8F0" />
@@ -71,27 +71,24 @@ export function TradeoffChart({ tradeoffs }: { tradeoffs: TradeoffAnalysis }) {
                     strokeWidth={2}
                   />
                 ))}
-                <Legend
-                  wrapperStyle={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, paddingTop: 12 }}
-                />
+                <Legend wrapperStyle={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, paddingTop: 12 }} />
               </RadarChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Supplementary table */}
-      <div className="card" style={{ marginTop: 16 }}>
-        <div className="card-header">
-          <div className="card-label">Score Breakdown</div>
+      <div className="bg-white border border-zinc-200 rounded mt-4">
+        <div className="px-4 py-3 border-b border-zinc-200 bg-zinc-50">
+          <div className="text-[11px] font-semibold tracking-wider uppercase text-zinc-400">Score Breakdown</div>
         </div>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "JetBrains Mono, monospace", fontSize: 12 }}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse font-mono text-xs">
             <thead>
-              <tr style={{ background: "#F1F5F9" }}>
-                <th style={{ padding: "10px 16px", textAlign: "left", borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontWeight: 600, letterSpacing: "0.04em", fontSize: 11 }}>DIMENSION</th>
+              <tr className="bg-zinc-100">
+                <th className="px-4 py-2.5 text-left border-b border-zinc-200 text-zinc-400 font-semibold tracking-wider text-[11px]">DIMENSION</th>
                 {tradeoffs.futures.map((f, i) => (
-                  <th key={f.future} style={{ padding: "10px 16px", textAlign: "center", borderBottom: "1px solid var(--border)", color: COLORS[i % COLORS.length], fontWeight: 600, fontSize: 11 }}>
+                  <th key={f.future} className="px-4 py-2.5 text-center border-b border-zinc-200 font-semibold text-[11px]" style={{ color: COLORS[i % COLORS.length] }}>
                     {f.future.split(":")[0]}
                   </th>
                 ))}
@@ -99,17 +96,17 @@ export function TradeoffChart({ tradeoffs }: { tradeoffs: TradeoffAnalysis }) {
             </thead>
             <tbody>
               {tradeoffs.dimensions.map((dim, di) => (
-                <tr key={dim} style={{ background: di % 2 === 0 ? "#FAFAFA" : "#FFFFFF" }}>
-                  <td style={{ padding: "8px 16px", borderBottom: "1px solid var(--border)", color: "var(--text-secondary)", fontWeight: 500 }}>{dim}</td>
+                <tr key={dim} className={di % 2 === 0 ? "bg-zinc-50" : "bg-white"}>
+                  <td className="px-4 py-2 border-b border-zinc-200 text-zinc-600 font-medium">{dim}</td>
                   {tradeoffs.futures.map((f, fi) => {
                     const score = f.scores.find((s) => s.dimension === dim)?.value ?? 0;
                     return (
-                      <td key={f.future} style={{ padding: "8px 16px", textAlign: "center", borderBottom: "1px solid var(--border)" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                          <div style={{ width: 40, height: 4, background: "#E2E8F0", borderRadius: 2, overflow: "hidden" }}>
-                            <div style={{ width: `${score * 10}%`, height: "100%", background: COLORS[fi % COLORS.length], borderRadius: 2 }} />
+                      <td key={f.future} className="px-4 py-2 text-center border-b border-zinc-200">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <div className="w-10 h-1 bg-zinc-200 rounded overflow-hidden">
+                            <div className="h-full rounded" style={{ width: `${score * 10}%`, background: COLORS[fi % COLORS.length] }} />
                           </div>
-                          <span style={{ color: COLORS[fi % COLORS.length], fontWeight: 600 }}>{score}</span>
+                          <span className="font-semibold" style={{ color: COLORS[fi % COLORS.length] }}>{score}</span>
                         </div>
                       </td>
                     );

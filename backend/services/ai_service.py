@@ -19,7 +19,7 @@ MODEL = "gemini-2.5-flash"
 
 SYSTEM_PROMPT = """You are Parallax, an AI Decision Intelligence System.
 You NEVER make decisions for users. You ONLY help them think clearly.
-Your purpose is to extract structured reasoning from user input about high-stakes career decisions.
+Your purpose is to extract structured reasoning from user input about any high-stakes decision.
 Output ONLY valid JSON matching the exact schema requested. No markdown fences. No extra text."""
 
 
@@ -118,20 +118,17 @@ Find 2-4 contradictions. Do not judge — only identify inconsistencies."""
 
 
 def generate_scenarios(extraction: DecisionExtraction) -> List[Scenario]:
-    prompt = f"""Generate exactly 3 possible future scenarios for this person.
+    prompt = f"""Generate exactly 3 distinct possible future scenarios based on this person's situation.
 
 Goals: {extraction.goals}
 Constraints: {extraction.constraints}
 Priorities: {extraction.priorities}
 Fears: {extraction.fears}
 
-Create these three futures:
-- Future A: Accept the current offer
-- Future B: Wait for a better opportunity
-- Future C: A hybrid strategy
+The three scenarios should represent meaningfully different paths forward. Let the user's specific context determine what they are — do not assume a career context.
 
 Return a JSON array where each item has:
-- future: string (name/label like "Future A: Accept Offer")
+- future: string (name/label like "Scenario A: [short descriptive name]")
 - description: string (what happens in this future)
 - upside: string (key benefits)
 - downside: string (key risks)
@@ -145,20 +142,20 @@ IMPORTANT: These are exploratory scenarios, not predictions."""
 
 
 def analyze_tradeoffs(scenarios: List[Scenario]) -> TradeoffAnalysis:
-    prompt = f"""Score these scenarios across decision dimensions.
+    prompt = f"""Score these scenarios across relevant decision dimensions.
 
 Scenarios:
 {json.dumps([s.model_dump() for s in scenarios], indent=2)}
 
-Dimensions to score: Financial Stability, Career Growth, Learning, Risk, Flexibility, Family Impact
+First, determine 4-6 decision dimensions that are most relevant to this specific situation (based on the scenarios). Then score each scenario against each dimension.
 
 Return JSON with:
-- dimensions: array of the 6 dimension names
+- dimensions: array of dimension names (strings)
 - futures: array of objects with:
   - future: string (scenario name)
   - scores: array of objects with dimension (string) and value (number 0-10)
 
-Never rank the futures. Only compare them."""
+Never rank the futures. Only compare them. Dimensions should reflect what actually matters in this situation."""
     result = _call_json(prompt)
     return TradeoffAnalysis(**result)
 

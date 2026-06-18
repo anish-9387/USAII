@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 "use client";
 
 import { useState } from "react";
@@ -14,6 +15,7 @@ import { ReflectionQuestions } from "@/components/reflection-questions";
 import { DecisionContractSection } from "@/components/decision-contract";
 import { ActionPlanSection } from "@/components/action-plan";
 import { useRouter } from "next/navigation";
+import { Menu, X } from "lucide-react";
 
 type LayerId = "input" | "extraction" | "graph" | "assumptions" | "contradictions" | "scenarios" | "tradeoffs" | "reflect" | "contract" | "action";
 
@@ -44,10 +46,14 @@ const NAV_GROUPS = [
   },
 ];
 
-const TOP_TABS: { id: LayerId; label: string }[] = [
-  { id: "extraction", label: "Extraction" },
-  { id: "graph", label: "Belief Graph" },
-  { id: "scenarios", label: "Scenarios" },
+const MOBILE_TABS: { id: LayerId; label: string }[] = [
+  { id: "extraction", label: "Extract" },
+  { id: "graph", label: "Graph" },
+  { id: "assumptions", label: "Stress" },
+  { id: "scenarios", label: "Futures" },
+  { id: "tradeoffs", label: "Tradeoffs" },
+  { id: "contract", label: "Contract" },
+  { id: "action", label: "Action" },
 ];
 
 const LOADING_STEPS = [
@@ -69,6 +75,7 @@ export default function AppPage() {
   const [activeLayer, setActiveLayer] = useState<LayerId>("input");
   const [error, setError] = useState<string | null>(null);
   const [loadingStep, setLoadingStep] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleAnalyze = async (message: string) => {
     setLoading(true);
@@ -101,62 +108,57 @@ export default function AppPage() {
   const canAccess = (id: LayerId) => !!analysis || id === "input";
 
   return (
-    <div className="app-shell">
-      {/* Top Bar */}
-      <header className="app-topbar">
-        <button onClick={() => router.push("/")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-          <span className="topbar-logo">PARALLAX</span>
+    <div className="flex flex-col h-screen overflow-hidden">
+      <header className="h-12 bg-white border-b border-zinc-200 flex items-center px-3 sm:px-6 gap-2 sm:gap-8 shrink-0 z-10">
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="sm:hidden p-1.5 rounded hover:bg-zinc-100 transition-colors">
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
-        {analysis && (
-          <nav className="topbar-nav">
-            {TOP_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                className={`topbar-nav-item${activeLayer === tab.id ? " active" : ""}`}
-                onClick={() => setActiveLayer(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        )}
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
-          <span className="chip chip-indigo" style={{ fontSize: 10 }}>● HUMAN-IN-THE-LOOP: ACTIVE</span>
+        <button onClick={() => router.push("/")} className="bg-none border-none cursor-pointer p-0">
+          <span className="font-bold text-sm sm:text-base tracking-tight text-zinc-900">PARALLAX</span>
+        </button>
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-semibold rounded font-mono bg-indigo-50 text-indigo-600 whitespace-nowrap">● HUMAN-IN-THE-LOOP: ACTIVE</span>
         </div>
       </header>
 
-      {/* Body */}
-      <div className="app-body">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile overlay */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 bg-black/30 z-20 sm:hidden" onClick={() => setSidebarOpen(false)} />
+        )}
+
         {/* Sidebar */}
-        <aside className="app-sidebar scrollbar-thin">
-          <div className="sidebar-header">
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <div style={{ width: 32, height: 32, background: "#F1F5F9", border: "1px solid var(--border)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>◈</div>
+        <aside className={`w-60 bg-white border-r border-zinc-200 flex flex-col shrink-0 overflow-y-auto py-5 transition-transform duration-200 z-30
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          sm:translate-x-0 sm:relative sm:z-0 fixed h-full sm:h-auto`}>
+          <div className="px-4 pb-4 border-b border-zinc-200 mb-2">
+            <div className="flex items-center gap-2.5 mb-2.5">
+              <div className="w-8 h-8 bg-zinc-100 border border-zinc-200 rounded flex items-center justify-center text-sm">◈</div>
               <div>
-                <div className="sidebar-title">Decision<br />Architecture</div>
-                <div className="sidebar-subtitle">Analytical Environment</div>
+                <div className="font-bold text-sm leading-tight">Decision<br />Architecture</div>
+                <div className="font-mono text-[11px] text-zinc-400 mt-0.5">Analytical Environment</div>
               </div>
             </div>
-            <button className="btn-new-model" onClick={handleReset}>
-              <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> New Decision Model
+            <button className="flex items-center gap-1.5 mx-3 my-3 px-3 py-2 bg-zinc-900 text-white rounded text-sm font-semibold cursor-pointer hover:opacity-85 transition-opacity w-[calc(100%-24px)]" onClick={handleReset}>
+              <span className="text-base leading-none">+</span> New Decision Model
             </button>
           </div>
 
-          <nav className="sidebar-nav">
+          <nav className="flex-1 py-2">
             {NAV_GROUPS.map((group) => (
-              <div key={group.label} style={{ marginBottom: 4 }}>
-                <div style={{ padding: "6px 16px 2px", fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace" }}>
+              <div key={group.label} className="mb-1">
+                <div className="px-4 py-1.5 text-[10px] font-semibold tracking-widest uppercase text-zinc-400 font-mono">
                   {group.label}
                 </div>
                 {group.items.map((item) => (
                   <button
                     key={item.id}
-                    className={`sidebar-nav-item${activeLayer === item.id ? " active" : ""}`}
-                    onClick={() => canAccess(item.id) && setActiveLayer(item.id)}
+                    className={`flex items-center gap-2.5 px-4 py-2 text-sm font-medium w-full bg-transparent border-none text-left cursor-pointer transition-colors ${activeLayer === item.id ? "text-indigo-500 border-l-2 border-l-indigo-500 bg-indigo-50" : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50"
+                      } ${!canAccess(item.id) ? "opacity-35 cursor-not-allowed" : ""}`}
+                    onClick={() => { canAccess(item.id) && setActiveLayer(item.id); setSidebarOpen(false); }}
                     disabled={!canAccess(item.id)}
-                    style={{ width: "100%", background: "none", border: "none", textAlign: "left", cursor: canAccess(item.id) ? "pointer" : "not-allowed", opacity: canAccess(item.id) ? 1 : 0.35 }}
                   >
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
                       <rect x="2" y="2" width="12" height="12" rx="2" />
                       <path d="M5 8h6M8 5v6" />
                     </svg>
@@ -166,62 +168,59 @@ export default function AppPage() {
               </div>
             ))}
           </nav>
-
-          <div className="sidebar-bottom">
-            <button className="sidebar-nav-item" style={{ width: "100%", background: "none", border: "none", textAlign: "left", cursor: "pointer" }}>
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="6" /><path d="M8 7v1.5M8 11h.01" /></svg>
-              Help
-            </button>
-            <button className="sidebar-nav-item" style={{ width: "100%", background: "none", border: "none", textAlign: "left", cursor: "pointer" }}>
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="4" width="12" height="9" rx="1" /><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" /></svg>
-              Logs
-            </button>
-          </div>
         </aside>
 
-        {/* Main */}
-        <main className="app-main scrollbar-thin">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 pb-20 sm:pb-8">
           {activeLayer === "input" && (
-            <div className="fade-in">
+            <div className="animate-[fadeIn_0.3s_ease]">
               {!loading ? (
                 <ChatInput onAnalyze={handleAnalyze} loading={loading} />
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 320, gap: 24 }}>
-                  <div style={{ width: 48, height: 48, border: "3px solid var(--border)", borderTopColor: "var(--indigo)", borderRadius: "50%" }} className="spin" />
-                  <div className="status-line">
-                    <span className="status-dot" />
-                    <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 13 }}>{loadingStep}</span>
+                <div className="flex flex-col items-center justify-center min-h-80 gap-6">
+                  <div className="w-12 h-12 border-[3px] border-zinc-200 border-t-indigo-500 rounded-full animate-spin" />
+                  <div className="flex items-center gap-2 font-mono text-xs text-zinc-400">
+                    <span className="w-1.75 h-1.75 rounded-full bg-indigo-500 shrink-0 animate-pulse" />
+                    <span className="font-mono text-sm">{loadingStep}</span>
                   </div>
-                  <span className="chip chip-neutral">gemini-2.5-flash · Vertex AI</span>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded font-mono bg-zinc-100 text-zinc-500">gemini-2.5-flash · Vertex AI</span>
                 </div>
               )}
               {error && (
-                <div className="card" style={{ marginTop: 24, borderLeft: "3px solid var(--red)" }}>
-                  <div className="card-body" style={{ color: "var(--red)", fontFamily: "JetBrains Mono, monospace", fontSize: 13 }}>{error}</div>
-                </div>
+                <div className="mt-6 bg-white border border-zinc-200 rounded border-l-[3px] border-l-red-500 p-4 text-red-500 font-mono text-sm">{error}</div>
               )}
             </div>
           )}
-          {analysis && activeLayer === "extraction" && <div className="fade-in"><ExtractionDisplay extraction={analysis.extraction} /></div>}
-          {analysis && activeLayer === "graph" && <div className="fade-in"><BeliefGraph graph={analysis.belief_graph} /></div>}
-          {analysis && activeLayer === "assumptions" && <div className="fade-in"><AssumptionsList assumptions={analysis.assumptions} /></div>}
-          {analysis && activeLayer === "contradictions" && <div className="fade-in"><Contradictions contradictions={analysis.contradictions} /></div>}
-          {analysis && activeLayer === "scenarios" && <div className="fade-in"><Scenarios scenarios={analysis.scenarios} /></div>}
-          {analysis && activeLayer === "tradeoffs" && <div className="fade-in"><TradeoffChart tradeoffs={analysis.tradeoffs} /></div>}
-          {analysis && activeLayer === "reflect" && <div className="fade-in"><ReflectionQuestions questions={analysis.reflection_questions} /></div>}
-          {analysis && activeLayer === "contract" && <div className="fade-in"><DecisionContractSection analysis={analysis} /></div>}
-          {analysis && activeLayer === "action" && <div className="fade-in"><ActionPlanSection analysis={analysis} /></div>}
+          {analysis && activeLayer === "extraction" && <div className="animate-[fadeIn_0.3s_ease]"><ExtractionDisplay extraction={analysis.extraction} /></div>}
+          {analysis && activeLayer === "graph" && <div className="animate-[fadeIn_0.3s_ease]"><BeliefGraph graph={analysis.belief_graph} /></div>}
+          {analysis && activeLayer === "assumptions" && <div className="animate-[fadeIn_0.3s_ease]"><AssumptionsList assumptions={analysis.assumptions} /></div>}
+          {analysis && activeLayer === "contradictions" && <div className="animate-[fadeIn_0.3s_ease]"><Contradictions contradictions={analysis.contradictions} /></div>}
+          {analysis && activeLayer === "scenarios" && <div className="animate-[fadeIn_0.3s_ease]"><Scenarios scenarios={analysis.scenarios} /></div>}
+          {analysis && activeLayer === "tradeoffs" && <div className="animate-[fadeIn_0.3s_ease]"><TradeoffChart tradeoffs={analysis.tradeoffs} /></div>}
+          {analysis && activeLayer === "reflect" && <div className="animate-[fadeIn_0.3s_ease]"><ReflectionQuestions questions={analysis.reflection_questions} /></div>}
+          {analysis && activeLayer === "contract" && <div className="animate-[fadeIn_0.3s_ease]"><DecisionContractSection analysis={analysis} /></div>}
+          {analysis && activeLayer === "action" && <div className="animate-[fadeIn_0.3s_ease]"><ActionPlanSection analysis={analysis} /></div>}
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="app-footer">
-        <span>Parallax is a reasoning tool, not a decision maker. You are in control.</span>
-        <div style={{ display: "flex", gap: 20 }}>
-          <span style={{ cursor: "pointer" }}>Ethics Policy</span>
-          <span style={{ cursor: "pointer" }}>Methodology</span>
-          <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>Human-in-the-loop Status: Active</span>
-        </div>
+      {/* Mobile bottom tabs */}
+      {analysis && (
+        <nav className="sm:hidden flex overflow-x-auto border-t border-zinc-200 bg-white shrink-0 gap-0">
+          {MOBILE_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveLayer(tab.id)}
+              className={`flex-1 min-w-0 px-1.5 py-2 text-[10px] font-semibold whitespace-nowrap transition-colors border-b-2 ${activeLayer === tab.id ? "text-indigo-500 border-indigo-500" : "text-zinc-400 border-transparent"
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      )}
+
+      <footer className="h-10 bg-white border-t border-zinc-200 flex items-center justify-between px-3 sm:px-6 shrink-0 font-mono text-[10px] sm:text-[11px] text-zinc-400">
+        <span className="truncate">Parallax is a reasoning tool, not a decision maker.</span>
+        <span className="text-zinc-900 font-semibold shrink-0 ml-2">Human-in-the-loop</span>
       </footer>
     </div>
   );

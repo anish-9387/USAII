@@ -31,83 +31,65 @@ export function ChatInput({ onAnalyze, loading }: ChatInputProps) {
   };
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto" }}>
-      {/* Hero */}
-      <div style={{ marginBottom: 40, textAlign: "center" }}>
-        <div className="chip chip-indigo" style={{ marginBottom: 20, display: "inline-flex" }}>
+    <div className="max-w-190 mx-auto">
+      <div className="mb-10 text-center">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded font-mono bg-indigo-50 text-indigo-600 mb-5">
           ● HUMAN-IN-THE-LOOP STATUS: ACTIVE
-        </div>
-        <h1 style={{ fontSize: 40, fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.02em", marginBottom: 12 }}>
+        </span>
+        <h1 className="text-2xl sm:text-4xl font-bold leading-[1.15] tracking-tight mb-3">
           Don&apos;t ask AI what to do.<br />
-          <span style={{ color: "var(--indigo)" }}>Ask AI to help you think.</span>
+          <span className="text-indigo-500">Ask AI to help you think.</span>
         </h1>
-        <p style={{ fontSize: 14, color: "var(--text-secondary)", fontFamily: "JetBrains Mono, monospace", maxWidth: 520, margin: "0 auto", lineHeight: 1.8 }}>
+        <p className="text-sm text-zinc-600 font-mono max-w-130 mx-auto leading-relaxed">
           A Second Brain for Real Life. Navigate high-stakes career decisions with clarity, structural thinking, and evidence — not opaque recommendations.
         </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-          <div className="card" style={{ padding: "12px 16px", display: "flex", alignItems: "flex-start", gap: 10, maxWidth: 200, textAlign: "left" }}>
-            <span style={{ fontSize: 18 }}>◎</span>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 2 }}>Human-in-the-Loop</div>
-              <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.5 }}>The system augments, never automates.</div>
+        <div className="flex gap-3 justify-center mt-7 flex-wrap">
+          {[
+            { icon: "◎", title: "Human-in-the-Loop", desc: "The system augments, never automates." },
+            { icon: "⬡", title: "Structural Thinking", desc: "Map thoughts into logical graphs." },
+            { icon: "⚖", title: "Tradeoff Analysis", desc: "Quantify the invisible costs." },
+            { icon: "◈", title: "Responsible AI", desc: "No black-box recommendations." },
+          ].map(({ icon, title, desc }) => (
+            <div key={title} className="bg-white border border-zinc-200 rounded p-3 flex items-start gap-2.5 max-w-45 text-left">
+              <span className="text-lg">{icon}</span>
+              <div>
+                <div className="text-xs font-semibold mb-0.5">{title}</div>
+                <div className="text-[11px] text-zinc-400 font-mono leading-relaxed">{desc}</div>
+              </div>
             </div>
-          </div>
-          <div className="card" style={{ padding: "12px 16px", display: "flex", alignItems: "flex-start", gap: 10, maxWidth: 200, textAlign: "left" }}>
-            <span style={{ fontSize: 18 }}>⬡</span>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 2 }}>Structural Thinking</div>
-              <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.5 }}>Map thoughts into logical graphs.</div>
-            </div>
-          </div>
-          <div className="card" style={{ padding: "12px 16px", display: "flex", alignItems: "flex-start", gap: 10, maxWidth: 200, textAlign: "left" }}>
-            <span style={{ fontSize: 18 }}>⚖</span>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 2 }}>Tradeoff Analysis</div>
-              <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.5 }}>Quantify the invisible costs.</div>
-            </div>
-          </div>
-          <div className="card" style={{ padding: "12px 16px", display: "flex", alignItems: "flex-start", gap: 10, maxWidth: 200, textAlign: "left" }}>
-            <span style={{ fontSize: 18 }}>◈</span>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 2 }}>Responsible AI</div>
-              <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.5 }}>No black-box recommendations.</div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Input card */}
-      <div className="card">
-        <div className="card-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div className="bg-white border border-zinc-200 rounded">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 bg-zinc-50">
           <div>
-            <div className="card-label">Decision Input</div>
-            <div className="card-title">Current Thought Stream</div>
+            <div className="text-[11px] font-semibold tracking-wider uppercase text-zinc-400">Decision Input</div>
+            <div className="text-sm font-bold text-zinc-900 mt-0.5">Current Thought Stream</div>
           </div>
-          <span className="chip chip-neutral">Source: Direct Input</span>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded font-mono bg-zinc-100 text-zinc-500">Source: Direct Input</span>
         </div>
-        <div className="card-body">
+        <div className="p-4">
           <form onSubmit={handleSubmit}>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={`"I have a 6 LPA offer.\nMy dream company arrives later.\nFamily depends on me.\nI have an education loan."`}
-              className="input-mono"
+              className="font-mono text-sm px-3 py-2.5 border border-zinc-200 rounded bg-white text-zinc-900 w-full outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 resize-y"
+              style={{ borderLeft: "3px solid #6366F1", borderRadius: "0 4px 4px 0" }}
               rows={6}
-              style={{ borderLeft: "3px solid var(--indigo)", borderRadius: "0 4px 4px 0", marginBottom: 12 }}
               disabled={loading}
             />
 
-            {/* Quick fills */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace", marginBottom: 8 }}>Quick scenarios:</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            <div className="mb-4">
+              <div className="text-[11px] text-zinc-400 font-mono mb-2">Quick scenarios:</div>
+              <div className="flex flex-wrap gap-1.5">
                 {QUICK_FILLS.map((fill, i) => (
                   <button
                     key={i}
                     type="button"
-                    className="chip chip-neutral"
-                    style={{ cursor: "pointer", fontSize: 11, padding: "4px 10px", border: "1px solid var(--border)" }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded font-mono bg-zinc-100 text-zinc-500 cursor-pointer border border-zinc-200 hover:bg-zinc-200 transition-colors"
                     onClick={() => setMessage(fill)}
                   >
                     Scenario {i + 1}
@@ -116,19 +98,16 @@ export function ChatInput({ onAnalyze, loading }: ChatInputProps) {
               </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div className="status-line">
-                <span style={{ fontSize: 11, fontFamily: "JetBrains Mono, monospace", color: "var(--text-muted)" }}>
-                  Ctrl+Enter to analyze · Powered by Gemini 2.5 Flash · Vertex AI
-                </span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div className="text-xs font-mono text-zinc-400">
+                Ctrl+Enter to analyze · Gemini 2.5 Flash · Vertex AI
               </div>
               <button
                 type="submit"
-                className="btn-indigo"
+                className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-indigo-500 text-white rounded text-sm font-semibold hover:bg-indigo-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 disabled={!message.trim() || loading}
-                id="analyze-btn"
               >
-                {loading ? <Loader2 style={{ width: 14, height: 14 }} className="spin" /> : <span>▶</span>}
+                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <span>▶</span>}
                 {loading ? "Analyzing..." : "Start Reasoning Journey"}
               </button>
             </div>
@@ -136,7 +115,7 @@ export function ChatInput({ onAnalyze, loading }: ChatInputProps) {
         </div>
       </div>
 
-      <p style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace" }}>
+      <p className="text-center mt-4 text-xs text-zinc-400 font-mono">
         You are the decision maker. We are the architects of your reasoning.
       </p>
     </div>
