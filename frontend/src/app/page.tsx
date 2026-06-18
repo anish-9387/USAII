@@ -69,14 +69,9 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 sm:px-10 h-16 bg-white border-b border-zinc-200">
         <div className="flex items-center gap-4 sm:gap-8">
           <span className="font-bold text-xl sm:text-[22px] tracking-tight text-zinc-900">PARALLAX</span>
-          <div className="hidden sm:flex gap-6">
-            {["Extraction", "Stress Test", "Scenarios"].map((item) => (
-              <a key={item} href="/app" className="text-sm font-medium text-zinc-600 hover:text-indigo-500 transition-colors no-underline">{item}</a>
-            ))}
-          </div>
         </div>
         <button onClick={() => router.push("/app")} className="px-4 sm:px-5 py-2 bg-zinc-900 text-white rounded text-sm font-semibold cursor-pointer hover:bg-zinc-800 transition-colors">
-          Open App
+          Open Chat
         </button>
       </nav>
 
