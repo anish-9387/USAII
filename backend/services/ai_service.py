@@ -23,6 +23,8 @@ Your purpose is to extract structured reasoning from user input about any high-s
 Output ONLY valid JSON matching the exact schema requested. No markdown fences. No extra text."""
 
 
+from tenacity import retry, wait_exponential, stop_after_attempt
+
 def _get_client() -> genai.Client:
     creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "key.json")
     if not os.path.isabs(creds_path):
@@ -34,7 +36,7 @@ def _get_client() -> genai.Client:
         location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1"),
     )
 
-
+@retry(wait=wait_exponential(multiplier=1, min=2, max=10), stop=stop_after_attempt(5))
 def _call_json(prompt: str) -> dict | list:
     client = _get_client()
     response = client.models.generate_content(
