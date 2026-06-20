@@ -57,6 +57,14 @@ export interface ReflectionQuestion {
   question: string;
 }
 
+export interface ReflectionEvaluation {
+  clarity_score: number;
+  blind_spots: string[];
+  key_insights: string[];
+  is_ready: boolean;
+  summary: string;
+}
+
 export interface Contradiction {
   conflict: string;
   explanation: string;

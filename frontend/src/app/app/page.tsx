@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import type { FullAnalysis } from "@/lib/types";
+import type { FullAnalysis, ReflectionEvaluation } from "@/lib/types";
 import { apiPost } from "@/lib/api";
 import { ChatInput } from "@/components/chat-input";
 import { ExtractionDisplay } from "@/components/extraction-display";
@@ -50,9 +50,11 @@ const MOBILE_TABS: { id: LayerId; label: string }[] = [
   { id: "extraction", label: "Extract" },
   { id: "graph", label: "Graph" },
   { id: "assumptions", label: "Stress" },
+  { id: "contradictions", label: "Conflict" },
   { id: "scenarios", label: "Futures" },
   { id: "tradeoffs", label: "Tradeoffs" },
-  { id: "contract", label: "Contract" },
+  { id: "reflect", label: "Reflect" },
+  { id: "contract", label: "Report" },
   { id: "action", label: "Action" },
 ];
 
@@ -76,10 +78,14 @@ export default function AppPage() {
   const [error, setError] = useState<string | null>(null);
   const [loadingStep, setLoadingStep] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userInput, setUserInput] = useState("");
+  const [reflectionAnswers, setReflectionAnswers] = useState<string[] | null>(null);
+  const [reflectionEval, setReflectionEval] = useState<ReflectionEvaluation | null>(null);
 
   const handleAnalyze = async (message: string) => {
     setLoading(true);
     setError(null);
+    setUserInput(message);
     let stepIdx = 0;
     setLoadingStep(LOADING_STEPS[0]);
     const interval = setInterval(() => {
@@ -103,6 +109,9 @@ export default function AppPage() {
     setAnalysis(null);
     setActiveLayer("input");
     setError(null);
+    setUserInput("");
+    setReflectionAnswers(null);
+    setReflectionEval(null);
   };
 
   const canAccess = (id: LayerId) => !!analysis || id === "input";
@@ -196,8 +205,30 @@ export default function AppPage() {
           {analysis && activeLayer === "contradictions" && <div className="animate-[fadeIn_0.3s_ease]"><Contradictions contradictions={analysis.contradictions} /></div>}
           {analysis && activeLayer === "scenarios" && <div className="animate-[fadeIn_0.3s_ease]"><Scenarios scenarios={analysis.scenarios} /></div>}
           {analysis && activeLayer === "tradeoffs" && <div className="animate-[fadeIn_0.3s_ease]"><TradeoffChart tradeoffs={analysis.tradeoffs} /></div>}
-          {analysis && activeLayer === "reflect" && <div className="animate-[fadeIn_0.3s_ease]"><ReflectionQuestions questions={analysis.reflection_questions} /></div>}
-          {analysis && activeLayer === "contract" && <div className="animate-[fadeIn_0.3s_ease]"><DecisionContractSection analysis={analysis} /></div>}
+          {analysis && activeLayer === "reflect" && (
+            <div className="animate-[fadeIn_0.3s_ease]">
+              <ReflectionQuestions
+                questions={analysis.reflection_questions}
+                extraction={analysis.extraction}
+                initialAnswers={reflectionAnswers ?? undefined}
+                initialEvaluation={reflectionEval}
+                onEvaluationComplete={(answers, evalResult) => {
+                  setReflectionAnswers(answers);
+                  setReflectionEval(evalResult);
+                }}
+              />
+            </div>
+          )}
+          {analysis && activeLayer === "contract" && (
+            <div className="animate-[fadeIn_0.3s_ease]">
+              <DecisionContractSection
+                analysis={analysis}
+                userInput={userInput}
+                reflectionEvaluation={reflectionEval}
+                reflectionAnswers={reflectionAnswers}
+              />
+            </div>
+          )}
           {analysis && activeLayer === "action" && <div className="animate-[fadeIn_0.3s_ease]"><ActionPlanSection analysis={analysis} /></div>}
         </main>
       </div>

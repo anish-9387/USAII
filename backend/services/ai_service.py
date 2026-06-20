@@ -10,7 +10,7 @@ from schemas.models import (
     Assumption, AssumptionList, Scenario, ScenarioList,
     TradeoffAnalysis, FutureTradeoff, TradeoffDimension,
     Contradiction, ContradictionList, ReflectionQuestion, ReflectionList,
-    ActionPlan, ActionStep, DecisionContract,
+    ActionPlan, ActionStep, DecisionContract, ReflectionEvaluation,
 )
 
 load_dotenv()
@@ -186,6 +186,38 @@ Return a JSON array where each item has:
     result = _call_json(prompt)
     items = result if isinstance(result, list) else result.get("questions", result.get("root", []))
     return [ReflectionQuestion(**r) if isinstance(r, dict) else ReflectionQuestion(question=r) for r in items]
+
+
+def evaluate_reflections(
+    extraction: DecisionExtraction,
+    questions: List[ReflectionQuestion],
+    answers: List[str],
+) -> ReflectionEvaluation:
+    qa_pairs = "\n".join(
+        f"Q{i+1}: {q.question}\nA{i+1}: {answers[i] if i < len(answers) else '(no answer)'}"
+        for i, q in enumerate(questions)
+    )
+    prompt = f"""Evaluate this person's reflection responses and assess their decision readiness.
+
+Context:
+Goals: {extraction.goals}
+Constraints: {extraction.constraints}
+Priorities: {extraction.priorities}
+Fears: {extraction.fears}
+
+Their reflection answers:
+{qa_pairs}
+
+Return JSON with:
+- clarity_score: number 0-10 (how clear and thoughtful their answers are)
+- blind_spots: array of strings (remaining blind spots or unaddressed areas)
+- key_insights: array of strings (important realizations from their answers)
+- is_ready: boolean (whether they appear ready to make a decision)
+- summary: string (a brief 2-3 sentence evaluation)
+
+Be constructive and honest. Do not flatter or push toward any choice."""
+    result = _call_json(prompt)
+    return ReflectionEvaluation(**result)
 
 
 def generate_decision_contract(

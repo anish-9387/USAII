@@ -77,6 +77,14 @@ class ReflectionList(RootModel):
     root: List[ReflectionQuestion]
 
 
+class ReflectionEvaluation(BaseModel):
+    clarity_score: float
+    blind_spots: List[str]
+    key_insights: List[str]
+    is_ready: bool
+    summary: str
+
+
 class ActionStep(BaseModel):
     title: str
     description: str

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from schemas.models import (
   UserInput, DecisionExtraction, BeliefGraph, Assumption,
   Contradiction, Scenario, TradeoffAnalysis, ReflectionQuestion,
-  DecisionContract, ActionPlan, FullAnalysis
+  DecisionContract, ActionPlan, FullAnalysis, ReflectionEvaluation
 )
 from services import ai_service
 
@@ -27,6 +27,12 @@ class ContractRequest(BaseModel):
 class ActionPlanRequest(BaseModel):
   decision: str
   extraction: DecisionExtraction
+
+
+class EvaluateReflectionRequest(BaseModel):
+  extraction: DecisionExtraction
+  questions: list[ReflectionQuestion]
+  answers: list[str]
 
 
 @router.post("/analyze", response_model=FullAnalysis)
@@ -81,5 +87,19 @@ async def generate_action_plan(body: ActionPlanRequest):
   try:
     plan = await _run(ai_service.generate_action_plan, body.decision, body.extraction)
     return plan
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/evaluate-reflection", response_model=ReflectionEvaluation)
+async def evaluate_reflection(body: EvaluateReflectionRequest):
+  try:
+    eval_result = await _run(
+      ai_service.evaluate_reflections,
+      body.extraction,
+      body.questions,
+      body.answers,
+    )
+    return eval_result
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
