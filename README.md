@@ -6,7 +6,7 @@ Reverie is an AI-powered Decision Intelligence System built for the **USAII Glob
 
 ---
 
-## The Problem
+## The Problem (Just an example scenario)
 
 A final-year engineering student receives a 6 LPA placement offer. Their dream company arrives later. Family depends on their income. An education loan exists. They are paralysed between accepting certainty and pursuing possibility.
 
@@ -31,15 +31,15 @@ The AI never says *"You should choose X."* Instead, it helps users understand th
 
 | # | Layer | What it does |
 |---|-------|-------------|
-| 1 | **Decision Extraction Engine** | Extracts goals, fears, constraints, and priorities from natural language |
-| 2 | **Belief Graph Generator** | Visualises reasoning as an interactive node-edge graph (React Flow) |
-| 3 | **Assumption Stress Tester** | Identifies hidden assumptions, rates evidence strength and risk level |
-| 4 | **Contradiction Detection Engine** | Highlights inconsistencies in reasoning without judgement |
-| 5 | **Counterfactual Futures Engine** | Simulates multiple scenarios (accept / wait / hybrid) — labelled as *exploratory scenarios, not predictions* |
-| 6 | **Tradeoff Analyzer** | Compares futures across 6 dimensions via radar chart — never ranks |
-| 7 | **Decision Reflection Layer** | Generates adaptive prompts that challenge assumptions and clarify values |
-| 8 | **Action Plan Generator** | Produces 30/60/90-day concrete action steps after a decision is made |
-| 9 | **Decision Contract** | Records the decision, reasoning, and known tradeoffs — not correctness |
+| 1 | **Semantic Extraction** | Extracts goals, fears, constraints, and priorities from natural language |
+| 2 | **Belief Graph** | Visualises reasoning as an interactive node-edge graph (React Flow) |
+| 3 | **Assumption Stress Test** | Identifies hidden assumptions, rates evidence strength and risk level |
+| 4 | **Contradiction Detection** | Highlights inconsistencies in reasoning without judgement |
+| 5 | **Counterfactual Scenarios** | Simulates multiple possible futures — labelled as *exploratory scenarios, not predictions* |
+| 6 | **Tradeoff Analysis** | Compares futures across multiple dimensions via radar chart — never ranks |
+| 7 | **Decision Reflection** | Generates adaptive questions; user submits answers for AI evaluation with clarity score and blind spot analysis |
+| 8 | **Decision Report** | Exports the complete 7-layer analysis as a beautifully formatted PDF for offline review |
+| 9 | **90-Day Action Plan** | User states their chosen path; AI generates a concrete 30/60/90-day execution plan with risk mitigation; downloadable as PDF |
 
 ---
 
@@ -50,7 +50,7 @@ The AI never says *"You should choose X."* Instead, it helps users understand th
 | Frontend | Next.js 16, TypeScript, Tailwind CSS 4, shadcn/ui |
 | Visualisation | React Flow (belief graph), Recharts (radar chart) |
 | Backend | Python 3.11+, FastAPI, Uvicorn |
-| AI | OpenAI GPT-4o (structured JSON outputs via `response_format`) |
+| AI | Google Gemini 2.5 Flash via Vertex AI (structured JSON outputs via `response_mime_type`) |
 | Auth (future) | Clerk / Supabase |
 | Database (future) | PostgreSQL |
 | Package Manager | Poetry (backend), npm (frontend) |
@@ -64,7 +64,7 @@ The AI never says *"You should choose X."* Instead, it helps users understand th
 - Python 3.11+
 - Node.js 18+
 - Poetry (`pip install poetry`)
-- OpenAI API key
+- Google Cloud service account with Vertex AI access
 
 ### Backend Setup
 
@@ -74,7 +74,8 @@ poetry install
 
 # Configure environment
 cp .env.example .env
-# Edit .env and set OPENAI_API_KEY
+# Edit .env and set your Google Cloud project details
+# Place your Vertex AI service account key as key.json in the backend directory
 
 # Run
 poetry run python main.py
@@ -107,7 +108,9 @@ npm run dev
 6. **Layer 5** generates three future scenarios with upsides, downsides, and confidence
 7. **Layer 6** displays a radar chart comparing tradeoffs across dimensions
 8. **Layer 7** asks reflection questions to deepen thinking
-9. **User decides** — then Layers 8 & 9 generate an action plan and decision contract
+9. **Layer 8** exports the full analysis as a beautifully formatted PDF for review
+10. **User reviews** the PDF and states their chosen path in Layer 9
+11. **Layer 9** generates a 90-day action plan with risk mitigation and validation checkpoints — also downloadable as PDF
 
 ---
 
@@ -133,17 +136,18 @@ USAII/
 │   ├── main.py                 # FastAPI app entry point
 │   ├── pyproject.toml          # Poetry dependency management
 │   ├── .env / .env.example     # Environment configuration
+│   ├── key.json                # Google Vertex AI service account
 │   ├── routers/
-│   │   └── decision.py         # API routes (/api/analyze, /api/contract, /api/action-plan)
+│   │   └── decision.py         # API routes (/api/analyze, /api/contract, /api/action-plan, /api/evaluate-reflection)
 │   ├── schemas/
 │   │   └── models.py           # Pydantic models for all layers
 │   └── services/
-│       └── ai_service.py       # OpenAI structured output integration
+│       └── ai_service.py       # Gemini 2.5 Flash integration via Vertex AI
 ├── frontend/
 │   ├── src/
 │   │   ├── app/                # Next.js App Router pages
 │   │   ├── components/         # React components per layer
-│   │   └── lib/                # Types, API client, utilities
+│   │   └── lib/                # Types, API client, PDF export utilities
 │   └── package.json
 └── README.md
 ```
