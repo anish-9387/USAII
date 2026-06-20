@@ -68,7 +68,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#F7F9FB]" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
       <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 sm:px-10 h-16 bg-white border-b border-zinc-200">
         <div className="flex items-center gap-4 sm:gap-8">
-          <span className="font-bold text-xl sm:text-[22px] tracking-tight text-zinc-900">PARALLAX</span>
+          <span className="font-bold text-xl sm:text-[22px] tracking-tight text-zinc-900">REVERIE</span>
         </div>
         <button onClick={() => router.push("/app")} className="px-4 sm:px-5 py-2 bg-zinc-900 text-white rounded text-sm font-semibold cursor-pointer hover:bg-zinc-800 transition-colors">
           Open Chat
@@ -109,7 +109,7 @@ export default function LandingPage() {
             We are the architects of your reasoning.
           </h2>
           <p className="font-mono text-sm text-zinc-600 leading-relaxed">
-            PARALLAX is designed to eradicate cognitive bias and structural blind spots. We provide the scaffolding; you provide the intent.
+            REVERIE is designed to eradicate cognitive bias and structural blind spots. We provide the scaffolding; you provide the intent.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-300 mx-auto">
@@ -161,9 +161,9 @@ export default function LandingPage() {
       </section>
 
       <footer className="bottom-0 left-0 w-full z-50 flex flex-col sm:flex-row justify-between items-center px-4 sm:px-10 py-2 sm:h-11 bg-zinc-200 border-t border-zinc-300 font-mono text-[10px] sm:text-[11px] text-zinc-600">
-        <span className="font-bold text-zinc-900">PARALLAX</span>
+        <span className="font-bold text-zinc-900">REVERIE</span>
         <div className="flex flex-col sm:flex-row gap-1 sm:gap-6 items-center">
-          <span>Parallax is a reasoning tool, not a decision maker. You are in control.</span>
+          <span>Reverie is a reasoning tool, not a decision maker. You are in control.</span>
           <span className="font-bold text-zinc-900">Human-in-the-loop Status: Active</span>
         </div>
       </footer>

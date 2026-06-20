@@ -52,7 +52,7 @@ export function DecisionContractSection({
       <div className="mb-5">
         <h2 className="text-xl sm:text-[28px] font-bold tracking-tight mt-1 mb-2">Export Full Analysis</h2>
         <p className="font-mono text-sm text-zinc-600 leading-relaxed max-w-160">
-          Review your complete decision analysis spanning all layers. Download a beautifully formatted PDF report
+          Review your complete decision analysis spanning all layers. Download the PDF report
           containing your problem statement, extracted reasoning, scenarios, tradeoffs, and reflections.
         </p>
       </div>

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PARALLAX - AI Decision Intelligence System",
+  title: "REVERIE - AI Decision Intelligence System",
   description: "Don't ask AI what to do. Ask AI to help you think. A Second Brain for high-stakes career decisions.",
 };
 

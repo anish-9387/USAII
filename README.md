@@ -1,8 +1,8 @@
-# Parallax — AI Decision Intelligence System
+# Reverie - AI Decision Intelligence System
 
 **Don't ask AI what to do. Ask AI to help you think.**
 
-Parallax is an AI-powered Decision Intelligence System built for the **USAII Global AI Hackathon 2026** (Challenge: *Build the "Second Brain" for Real Life*). It helps final-year students navigate high-stakes career decisions by surfacing assumptions, detecting contradictions, simulating futures, and clarifying tradeoffs — without ever making a decision for them.
+Reverie is an AI-powered Decision Intelligence System built for the **USAII Global AI Hackathon 2026** (Challenge: *Build the "Second Brain" for Real Life*). It helps final-year students navigate high-stakes career decisions by surfacing assumptions, detecting contradictions, simulating futures, and clarifying tradeoffs — without ever making a decision for them.
 
 ---
 
@@ -10,7 +10,7 @@ Parallax is an AI-powered Decision Intelligence System built for the **USAII Glo
 
 A final-year engineering student receives a 6 LPA placement offer. Their dream company arrives later. Family depends on their income. An education loan exists. They are paralysed between accepting certainty and pursuing possibility.
 
-Traditional AI would recommend a path. Parallax helps them **think clearly** so they can choose for themselves.
+Traditional AI would recommend a path. Reverie helps them **think clearly** so they can choose for themselves.
 
 ---
 
@@ -113,7 +113,7 @@ npm run dev
 
 ## Responsible AI
 
-Parallax is designed with **Responsible AI** at its core:
+Reverie is designed with **Responsible AI** at its core:
 
 - **No recommendations** — the AI never suggests a choice
 - **Scenarios ≠ predictions** — every future simulation carries a disclaimer

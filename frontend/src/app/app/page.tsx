@@ -123,7 +123,7 @@ export default function AppPage() {
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
         <button onClick={() => router.push("/")} className="bg-none border-none cursor-pointer p-0">
-          <span className="font-bold text-sm sm:text-base tracking-tight text-zinc-900">PARALLAX</span>
+          <span className="font-bold text-sm sm:text-base tracking-tight text-zinc-900">REVERIE</span>
         </button>
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-semibold rounded font-mono bg-indigo-50 text-indigo-600 whitespace-nowrap">● HUMAN-IN-THE-LOOP: ACTIVE</span>
@@ -250,7 +250,7 @@ export default function AppPage() {
       )}
 
       <footer className="h-10 bg-white border-t border-zinc-200 flex items-center justify-between px-3 sm:px-6 shrink-0 font-mono text-[10px] sm:text-[11px] text-zinc-400">
-        <span className="truncate">Parallax is a reasoning tool, not a decision maker.</span>
+        <span className="truncate">Reverie is a reasoning tool, not a decision maker.</span>
         <span className="text-zinc-900 font-semibold shrink-0 ml-2">Human-in-the-loop</span>
       </footer>
     </div>
